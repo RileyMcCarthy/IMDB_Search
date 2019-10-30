@@ -9,6 +9,7 @@ void get_column (char *line, char *target, int colNumber) {
   int firstTab = 0;
   int secondTab = 0;
   int size = 0;
+
   for (i=0;i<strlen(line);i++) {
     if (tabCount == (colNumber-1)) {
       firstTab = i;
@@ -16,12 +17,17 @@ void get_column (char *line, char *target, int colNumber) {
     if (tabCount == (colNumber)) {
       secondTab = i;
     }
-    if (line[i] == '\t') {
+    if (line[i] == '\t' || line[i] == '\n') {
       tabCount++;
     }
   }
+  if (colNumber == 0) {
+    firstTab = 0;
+  }else {
+    firstTab++;
+  }
   size = secondTab - firstTab;
-  strncpy(target,&line[firstTab+1],size-1);
+  strncpy(target,&line[firstTab],size);
   target[strlen(target)] = '\0';
 }
 
