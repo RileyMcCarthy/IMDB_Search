@@ -1,4 +1,5 @@
 #include "common.h"
+#include "name.h"
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>

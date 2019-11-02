@@ -4,4 +4,4 @@ struct name_basics {
   char *primaryName;
 };
 
-struct name_basics *get_name (char *filename);
+int get_name (char *fileDir, struct name_basics **names);
