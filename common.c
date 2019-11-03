@@ -52,3 +52,17 @@ int csvContains (char *line, char *target) {
   }
   return 0;
 }
+
+char *reverse(char *string) {
+  char *reversed;
+  int end = 0;
+  int i = 0;
+  int len = strlen(string);
+  reversed = malloc(len+1);
+  for (i=0;i<len;i++) {
+    end = len-i-1;
+    reversed[i] = string[end];
+  }
+  reversed[len] = '\0';
+  return reversed;
+}
