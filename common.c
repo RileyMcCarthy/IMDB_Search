@@ -1,5 +1,7 @@
 #include "common.h"
 #include "name.h"
+#include "principals.h"
+#include "title.h"
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>

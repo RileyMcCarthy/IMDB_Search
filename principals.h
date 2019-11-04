@@ -16,3 +16,5 @@ void build_nconstIndex_tp (struct parray_info *info);
 void build_tconstIndex_tp (struct parray_info *info);
 struct title_principals *find_nconst_tp (struct parray_info *root, char *target);
 struct title_principals *find_tconst_tp (struct parray_info *root, char *target);
+struct tree_basics *find_nconst_tp_all (struct parray_info *root, char *target);
+struct tree_basics *find_tconst_tp_all (struct parray_info *root, char *target);

@@ -22,10 +22,10 @@ struct tarray_info *get_title (char *fileDir) {
   strcpy(directory, fileDir);
   strcat(directory,filename);
 
-  printf("%s\n",directory);
   fp = fopen(directory, "r");
   if (fp == NULL) {
     printf("Error opening file\n");
+    return NULL;
   }
 
   fgets(BUFFER, 1000, fp);
@@ -43,7 +43,6 @@ struct tarray_info *get_title (char *fileDir) {
     memset(BUFFER,0,sizeof(BUFFER));
   }
 
-  printf("Movie count is: %d\n",titleCount);
 
   /*now creating the array of actor/actress values*/
   memset(dataBUFFER,0,sizeof(dataBUFFER)); /*TODO test to make sure adding this line didnt fuck shit up*/
@@ -104,11 +103,20 @@ void build_tconstIndex (struct tarray_info *info) {
 
 struct title_basics *find_tconst (struct tarray_info *root, char *target) {
   char *rev;
+  struct tree_basics *temp;
   rev = reverse(target);
-  return (find_node(root->tree2,rev)->data);
+  temp = find_node(root->tree2,rev);
+  if (temp == NULL) {
+    return NULL;
+  }
+  return (temp->data);
 }
 
 struct title_basics *find_primary_title (struct tarray_info *root, char *target) {
-
-  return (find_node(root->tree1,target)->data);
+  struct tree_basics *temp;
+  temp = find_node(root->tree1,target);
+  if (temp == NULL) {
+    return NULL;
+  }
+  return (temp->data);
 }

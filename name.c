@@ -21,10 +21,10 @@ struct narray_info *get_name (char *fileDir) {
   strcpy(directory, fileDir);
   strcat(directory,filename);
 
-  printf("%s\n",directory);
   fp = fopen(directory, "r");
   if (fp == NULL) {
-    printf("Error opening file\n");
+    printf("error opening file\n");
+    return 0;
   }
 
   fgets(BUFFER, 1000, fp);
@@ -38,8 +38,6 @@ struct narray_info *get_name (char *fileDir) {
     }
     memset(BUFFER,0,sizeof(BUFFER));
   }
-
-  printf("Actor/actress count is: %d\n",actorCount);
 
   /*now creating the array of actor/actress values*/
   memset(dataBUFFER,0,sizeof(dataBUFFER));
@@ -107,11 +105,20 @@ void build_nconstIndex (struct narray_info *info) {
 
 struct name_basics *find_nconst (struct narray_info *root, char *target) {
   char *rev;
+  struct tree_basics *temp;
   rev = reverse(target);
-  return (find_node(root->tree2,rev)->data);
+  temp = find_node(root->tree2,rev);
+  if (temp == NULL) {
+    return NULL;
+  }
+  return (temp->data);
 }
 
 struct name_basics *find_primary_name (struct narray_info *root, char *target) {
-
-  return (find_node(root->tree1,target)->data);
+  struct tree_basics *temp;
+  temp = find_node(root->tree1,target);
+  if (temp == NULL) {
+    return NULL;
+  }
+  return (temp->data);
 }

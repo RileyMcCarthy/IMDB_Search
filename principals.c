@@ -7,7 +7,7 @@
 
 
 struct parray_info *get_principals (char *fileDir) {
-  char *filename = "/title.principals(1).tsv";
+  char *filename = "/title.principals.tsv";
   char *directory = malloc(strlen(filename) + strlen(fileDir) +1);
   char BUFFER[1000];
   char dataBUFFER[1000];
@@ -24,10 +24,10 @@ struct parray_info *get_principals (char *fileDir) {
   strcpy(directory, fileDir);
   strcat(directory,filename);
 
-  printf("%s\n",directory);
   fp = fopen(directory, "r");
   if (fp == NULL) {
-    printf("Error opening file\n");
+    printf("error opening file\n");
+    return NULL;
   }
 
   fgets(BUFFER, 1000, fp);
@@ -41,7 +41,6 @@ struct parray_info *get_principals (char *fileDir) {
     memset(BUFFER,0,sizeof(BUFFER));
   }
 
-  printf("Movie count is: %d\n",titleCount);
 
   /*now creating the array of actor/actress values*/
   memset(dataBUFFER,0,sizeof(dataBUFFER)); /*TODO test to make sure adding this line didnt fuck shit up*/
@@ -104,12 +103,44 @@ void build_tconstIndex_tp (struct parray_info *info) {
 
 struct title_principals *find_nconst_tp (struct parray_info *root, char *target) {
   char *rev;
+  struct tree_basics *temp;
   rev = reverse(target);
-  return (find_node(root->tree2,rev)->data);
+  temp = find_node(root->tree2,rev);
+  if (temp == NULL) {
+    return NULL;
+  }
+  return (temp->data);
+}
+
+struct tree_basics *find_nconst_tp_all (struct parray_info *root, char *target) {
+  char *rev;
+  struct tree_basics *temp;
+  rev = reverse(target);
+  temp = find_node(root->tree2,rev);
+  if (temp == NULL) {
+    return NULL;
+  }
+  return (temp);
 }
 
 struct title_principals *find_tconst_tp (struct parray_info *root, char *target) {
   char *rev;
+  struct tree_basics *temp;
   rev = reverse(target);
-  return (find_node(root->tree1,rev)->data);
+  temp = find_node(root->tree1,rev);
+  if (temp == NULL) {
+    return NULL;
+  }
+  return (temp->data);
+}
+
+struct tree_basics *find_tconst_tp_all (struct parray_info *root, char *target) {
+  char *rev;
+  struct tree_basics *temp;
+  rev = reverse(target);
+  temp = find_node(root->tree1,rev);
+  if (temp == NULL) {
+    return NULL;
+  }
+  return (temp);
 }
