@@ -4,164 +4,119 @@
 #include "common.h"
 #include "principals.h"
 #include "main.h"
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
-/*int main () {
+int main (int argc, char* argv[]) {
+  char BUFFER[1000];
+  char command[1000];
+  char parameter[1000];
   int i = 0;
-  struct tarray_info *info;
-  struct title_basics *found;
-  info = get_title("dataFiles");
-  printf("PRINTING %d\n", info->numItems);
+  int len;
+  int cStart = 0;
+  int cEnd = 0;
+  int pStart = 0;
+  int pEnd = 0;
+  int cSize = 0;
+  int pSize = 0;
+  struct tarray_info *titleBasics = NULL;
+  struct narray_info *nameBasics= NULL;
+  struct parray_info *titlePrincipals= NULL;
+  struct title_basics *title= NULL;
+  struct title_principals *principals= NULL;
+  struct name_basics *name= NULL;
+  struct tree_basics *allnconst= NULL;
 
-  build_ptindex(info);
-  printf( "%s\n", (info->tree1)->key );
-
-  printf( "%p\n", (info->tree1)->data );
-
-
-  printf("%s\n", ((struct title_basics *)(info->tree1)->data)->primaryTitle );
-
-  printf("%s\n", ((struct title_basics *)(info->tree1)->data)->tconst );
-
-  found = (struct title_basics *)find_primary_title(info,"Star Wars: Episode V - The Empire Strikes Back");
-
-  printf( "%p\n", (void *)found );
-
-  printf( "%s\n", found->tconst );
-
-  printf( "%s\n", found->primaryTitle );
-
-
-
-  for (i=0;i<info->numItems;i++) {
-    free(info->head[i].tconst);
-    free(info->head[i].primaryTitle);
+  if (argc == 1) {
+    printf("error, no directory command line input was given\n");
+    return -1;
   }
+  printf("%s\n",argv[1]);
 
-  free(info->head);
-  free(info);
-  return 0;
-}*/
-
-/*int main () {
-  int i = 0;
-  struct narray_info *info;
-  struct name_basics *found;
-  info = get_name("dataFiles");
-  printf("PRINTING %d\n", info->numItems);
-
-  build_pnindex(info);
-  printf( "%s\n", (info->tree1)->key );
-
-  printf( "%p\n", (info->tree1)->data );
-
-
-  printf("%s\n", ((struct name_basics *)(info->tree1)->data)->primaryName );
-
-  printf("%s\n", ((struct name_basics *)(info->tree1)->data)->nconst );
-
-  found = (struct name_basics *)find_primary_name(info,"Anthony Daniels");
-
-  printf( "%p\n", (void *)found );
-
-  printf( "%s\n", found->nconst );
-
-  printf( "%s\n", found->primaryName );
-
-  for (i=0;i<info->numItems;i++) {
-    free((info->head[i]).nconst);
-    free((info->head[i]).primaryName);
-  }
-
-  free(info->head);
-  free(info);
-  return 0;
-}*/
-
-/*int main () {
-  int i = 0;
-  struct tarray_info *info;
-  struct title_basics *found;
-  info = get_title("dataFiles");
-  printf("PRINTING %d\n", info->numItems);
-
-  build_tconstIndex(info);
-  printf( "%s\n", (info->tree2)->key );
-
-  printf( "%p\n", (info->tree2)->data );
-
-
-  printf("%s\n", ((struct title_basics *)(info->tree2)->data)->primaryTitle );
-
-  printf("%s\n", ((struct title_basics *)(info->tree2)->data)->tconst );
-
-  found = (struct title_basics *)find_tconst(info,"tt0080684");
-
-  printf( "%p\n", (void *)found );
-
-  printf( "%s\n", found->tconst );
-
-  printf( "%s\n", found->primaryTitle );
-
-  free(info);
-  return 0;
-}*/
-
-int main () {
-  struct tarray_info *titleBasics;
-  struct narray_info *nameBasics;
-  struct parray_info *titlePrincipals;
-  struct title_basics *title;
-  struct title_principals *principals;
-  struct name_basics *name;
-
-  titleBasics = get_title("dataFiles");
+  titleBasics = get_title(argv[1]);
   build_ptindex(titleBasics);
   build_tconstIndex(titleBasics);
-  nameBasics = get_name("dataFiles");
+  nameBasics = get_name(argv[1]);
   build_pnindex(nameBasics);
   build_nconstIndex(nameBasics);
-  titlePrincipals = get_principals("dataFiles");
+  titlePrincipals = get_principals(argv[1]);
   build_tconstIndex_tp(titlePrincipals);
   build_nconstIndex_tp(titlePrincipals);
+  while (1==1) {
+    memset(BUFFER,0,sizeof(BUFFER));
+    memset(command,0,sizeof(command));
+    memset(parameter,0,sizeof(parameter));
+    printf(">>");
+    fgets(BUFFER,1000,stdin);
+    len = strlen(BUFFER);
+    for (i=0;i<len;i++) {
+      if (BUFFER[i] != ' ') {
+        cStart = i;
+        break;
+      }
+    }
+    for (i=cStart;i<len;i++) {
+      if (BUFFER[i] == ' ') {
+        cEnd = i;
+        break;
+      }
+    }
+    for (i=cEnd;i<len;i++) {
+      if (BUFFER[i] != ' ') {
+        pStart = i;
+        break;
+      }
+    }
+    for (i=(len-2);i>0;i--) {
+      if (BUFFER[i] != ' ') {
+        pEnd = i;
+        break;
+      }
+    }
+    cSize = cEnd - cStart;
+    strncpy(command,&BUFFER[cStart],cSize);
+    command[strlen(command)] = '\0';
+    pSize = pEnd - pStart+1;
+    strncpy(parameter,&BUFFER[pStart],pSize);
+    parameter[strlen(parameter)] = '\0';
+    if (strncmp(command,"name",4) == 0) {
+      printf("Searching name:%s\n",parameter);
+      name = (struct name_basics *)find_primary_name(nameBasics,parameter);
+      if (name == NULL) {
+      } else {
+        allnconst = find_nconst_tp_all(titlePrincipals,name->nconst);
 
-  name = (struct name_basics *)find_primary_name(nameBasics,"Bruce Lee");
-  principals = (struct title_principals *)find_nconst_tp(titlePrincipals,name->nconst);
-  title = (struct title_basics *)find_tconst(titleBasics,principals->tconst);
+        while(allnconst != NULL) {
+          principals = (struct title_principals *)allnconst->data;
+          if (strcmp(principals->nconst,name->nconst) == 0) {
+              title = (struct title_basics *)find_tconst(titleBasics,principals->tconst);
+              if (title != NULL) {
+                printf("%s : ",title->primaryTitle);
+                printf("%s\n",principals->characters);
+              }else {
+              }
+          }
+          allnconst = (allnconst->left);
+        }
+      }
+    }else if (strncmp(command,"title",4) == 0) {
+      title = (struct title_basics *)find_primary_title(titleBasics,parameter);
+      if (title == NULL) {
+      }else {
+        allnconst = find_tconst_tp_all(titlePrincipals,title->tconst);
+        while (allnconst != NULL) {
+          principals = (struct title_principals *)allnconst->data;
+          if (strcmp(principals->tconst,title->tconst) == 0) {
+            name = find_nconst(nameBasics,principals->nconst);
+            printf("%s : %s\n",name->primaryName,principals->characters);
+          }
 
-  printf("%s\n",title->primaryTitle);
+          allnconst = allnconst->left;
+        }
+      }
+    }else {
+    }
+  }
   return 0;
 }
-
-/*int main () {
-  int i = 0;
-  struct parray_info *info;
-  struct title_principals *found;
-  info = get_principals("dataFiles");
-  printf("PRINTING %d\n", info->numItems);
-
-  build_tconstIndex_tp(info);
-  printf( "%s\n", (info->tree2)->key );
-
-  printf( "%p\n", (info->tree2)->data );
-
-
-  printf("%s\n", ((struct title_principals *)(info->tree2)->data)->nconst );
-
-  printf("%s\n", ((struct title_principals *)(info->tree2)->data)->tconst );
-  printf("%s\n", ((struct title_principals *)(info->tree2)->data)->characters );
-
-  found = (struct title_principals *)find_tconst_tp(info,"tt0080684");
-
-  printf( "%p\n", (void *)found );
-
-  printf( "%s\n", found->tconst );
-
-  printf( "%s\n", found->nconst );
-
-  printf( "%s\n", found->characters );
-
-  free(info);
-  return 0;
-}*/
